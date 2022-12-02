@@ -1,9 +1,10 @@
 /**
-* MakeCode extension for Wifi logger to a generic web server (e,g, a Google Sheet) 
+* MakeCode extension for a microbit Wifi logger 
+* which can upload readings to a generic web server (e,g, a Google Sheet) 
 * The WiFi handling uses an Espressif ESP8266 / ESP - 01 module
 * This extension is based on pxt - esp8266_thingspeak by alankrantas
 */
-//% color=#009b5b icon="\uf1eb" block="ESP8266 ThingSpeak"
+//% color=#00e43f icon="\uf1eb" block="ESP8266 web logger"
 namespace WebLogger {
 
     let wifi_connected: boolean = false
