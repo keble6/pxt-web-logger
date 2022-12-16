@@ -8,7 +8,7 @@
 namespace WebLogger {
 
     let wifi_connected: boolean = false
-    let server_connected: boolean = false
+    let webapp_connected: boolean = false
     let last_upload_successful: boolean = false
 
     /******************* Functions  **************************/
@@ -25,8 +25,8 @@ namespace WebLogger {
         let time: number = input.runningTime()
         while (true) {
             serial_str += serial.readString()
-            if (serial_str.length > 200) serial_str = serial_str.substr(serial_str.length - 200)
-            if (serial_str.includes("OK") || serial_str.includes("ALREADY CONNECTED")) {
+            //if (serial_str.length > 200) serial_str = serial_str.substr(serial_str.length - 200)
+            if (serial_str.includes("OK")) {
                 result = true
                 break
             } else if (serial_str.includes("ERROR") || serial_str.includes("SEND FAIL")) {
@@ -47,7 +47,7 @@ namespace WebLogger {
     //% pw.defl=your_pw
     export function connectWifi(tx: SerialPin, rx: SerialPin, baudrate: BaudRate, ssid: string, pw: string) {
         wifi_connected = false
-        server_connected = false
+        webapp_connected = false
         serial.redirect(
             tx,
             rx,
@@ -62,17 +62,18 @@ namespace WebLogger {
     }
 
     /**
-    * Connect to Server and upload data. It will not upload anything if it failed to connect to Wifi or Server.
+    * Connect to WebApp and upload data. 
+    * It will not upload anything if it failed to connect to Wifi or WebApp.
     */
-    //% block="Upload data to Server|URL/IP = %ip|Field 1 = %n1|Field 2 = %n2|Field 3 = %n3|Field 4 = %n4|Field 5 = %n5|Field 6 = %n6|Field 7 = %n7|Field 8 = %n8"
+    //% block="Upload data to WebApp|URL = %url|Field 1 = %n1|Field 2 = %n2|Field 3 = %n3|Field 4 = %n4|Field 5 = %n5|Field 6 = %n6|Field 7 = %n7|Field 8 = %n8"
     //% ip.defl=api.thingspeak.com
-    export function connectServer(ip: string, n1: number, n2: number, n3: number, n4: number, n5: number, n6: number, n7: number, n8: number) {
+    export function connectWebApp(url: string, n1: number, n2: number, n3: number, n4: number, n5: number, n6: number, n7: number, n8: number) {
         if (wifi_connected) {
-            server_connected = false
-            sendAT("AT+CIPSTART=\"TCP\",\"" + ip + "\",80", 0) // connect to website server
-            server_connected = waitResponse()
+            webapp_connected = false
+            sendAT("AT+CIPSTART=\"TCP\",\"" + url + "\",80", 0) // connect to website server
+            webapp_connected = waitResponse()
             basic.pause(100)
-            if (server_connected) {
+            if (webapp_connected) {
                 last_upload_successful = false
                 let str: string = "GET" + "&field1=" + n1 + "&field2=" + n2 + "&field3=" + n3 + "&field4=" + n4 + "&field5=" + n5 + "&field6=" + n6 + "&field7=" + n7 + "&field8=" + n8;
                 sendAT("AT+CIPSEND=" + (str.length + 2))
@@ -101,15 +102,15 @@ namespace WebLogger {
     }
 
     /**
-    * Check if ESP8266 successfully connected to Server
+    * Check if ESP8266 successfully connected to WebApp
     */
-    //% block="Server connected ?"
-    export function isServerConnected() {
-        return server_connected
+    //% block=WebApp connected ?"
+    export function isWebAppConnected() {
+        return webapp_connected
     }
 
     /**
-    * Check if ESP8266 successfully uploaded data to Server
+    * Check if ESP8266 successfully uploaded data to WebApp
     */
     //% block="Last data upload successful ?"
     export function isLastUploadSuccessful() {
