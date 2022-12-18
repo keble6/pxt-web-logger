@@ -75,7 +75,7 @@ namespace WebLogger {
             basic.pause(100)
             if (webapp_connected) {
                 last_upload_successful = false
-                let str: string = "GET /print/origin.html HTTP/1.0\r\nHost: " +url + "&field1=" + n1 + "&field2=" + n2 + "&field3=" + n3 + "&field4=" + n4 + "&field5=" + n5 + "&field6=" + n6 + "&field7=" + n7 + "&field8=" + n8;
+                let str: string = "GET /?field1=" + n1 + "&field2=" + n2 + "&field3=" + n3 + "&field4=" + n4 + "&field5=" + n5 + "&field6=" + n6 + "&field7=" + n7 + "&field8=" + n8;
                 sendAT("AT+CIPSEND=" + (str.length + 2))
                 sendAT(str, 0) // upload data
                 last_upload_successful = waitResponse()
